@@ -11,6 +11,7 @@ import {
 } from 'three'
 import {addRandomSphere} from "./addRandomSphere";
 import {GradiantMaterial} from "./gradiantMaterial";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 const scene = new Scene()
 const webGLRenderer = new WebGLRenderer({
@@ -62,11 +63,10 @@ const background = new Mesh(
 );
 scene.add(background);
 
-background.position.set(0, 0, 0 );
-background.rotation.x = Math.PI / 2;
+background.position.set(-10, 0, 0);
+background.rotation.y = Math.PI / 2;
 background.name = 'background';
 
-scene.add( new AxesHelper(1000));
 animate()
 
 window.addEventListener('resize', () => {
