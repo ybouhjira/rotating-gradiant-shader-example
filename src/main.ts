@@ -1,16 +1,7 @@
 import './style.css'
-import {
-    AmbientLight,
-    Mesh,
-    Object3D,
-    PerspectiveCamera,
-    Scene,
-    ShaderMaterial,
-    SphereGeometry,
-    Vector3,
-    WebGLRenderer
-} from 'three'
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {AmbientLight, BufferGeometry, Mesh, PerspectiveCamera, Scene, SphereGeometry, WebGLRenderer} from 'three'
+import {addRandomSphere} from "./addRandomSphere";
+import {GradiantMaterial} from "./gradiantMaterial";
 
 const scene = new Scene()
 const webGLRenderer = new WebGLRenderer({
@@ -25,84 +16,15 @@ scene.add(new AmbientLight(0x404040));
 camera.position.set(0, 8, 8);
 camera.lookAt(0, 0, 0);
 
-new OrbitControls(camera, webGLRenderer.domElement)
 
-const shaderMaterial = new ShaderMaterial(
-    {
-        //wireframe: true,
-        fragmentShader: `
-            varying vec2 vUv;
-            varying vec3 vNormal;
-            varying vec3 vPosition;
-            uniform float uTime;
-            
-            vec3 hsv2rgb(vec3 c) {
-                vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-                vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-                return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-            }
+const shaderMaterial = new GradiantMaterial();
 
-            void main() {
-                vec3 red = vec3(1., 0., 0.);
-                vec3 green = vec3(0., 1., 0.);
-                vec3 blue = vec3(0., 0., 1.);
-    
-                float y = vUv.y * 0.2 + cos(uTime);
-                
-                gl_FragColor = vec4(
-                    hsv2rgb(vec3(y, 1., 1.)),
-                    1.0
-                );
-            }
-        `,
-        vertexShader: ` 
-            varying vec2 vUv;
-            varying vec3 vNormal;
-            varying vec3 vPosition;
-            varying float uTime;
-            
-            void main() {
-                vUv = uv;
-                vNormal = normal;
-                vPosition = position;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-        `,
-        uniforms: {
-            uTime: {value: 0}
-        }
-    }
-);
 const sphere = new Mesh(
     new SphereGeometry(3, 200, 200),
     shaderMaterial
 );
 
-function addRandomSphere() {
-    return Array.from({length: 50}).map((_) => {
-        const obj = new Object3D()
-
-        const sphere2 = new Mesh(
-            new SphereGeometry(Math.random() * 2 - 0.5, 16, 16),
-            shaderMaterial
-        )
-
-        const getPos = () => Math.random() * 20 - 10;
-        sphere2.position.set(getPos(), getPos(), getPos());
-
-        (obj as any).__rotation = new Vector3(
-            Math.random() / 100,
-            Math.random() / 100,
-            Math.random() / 100
-        )
-        obj.add(sphere2)
-        obj.position.set(sphere.position.x, sphere.position.y, sphere.position.z)
-        return obj
-    })
-
-}
-
-const spheres = addRandomSphere()
+const spheres = addRandomSphere(sphere.position, shaderMaterial);
 
 
 scene.add(sphere)
@@ -113,7 +35,8 @@ sphere.add(...spheres);
 function animate() {
     requestAnimationFrame(animate);
 
-    shaderMaterial.uniforms.uTime.value += 0.005;
+    shaderMaterial.uniforms.uTime.value += 0.008;
+    (scene.getObjectByName('background') as Mesh<BufferGeometry, GradiantMaterial>).material!.uniforms.uTime.value += 0.008;
 
     spheres.forEach(s => {
 
@@ -128,13 +51,12 @@ function animate() {
 
 const background = new Mesh(
     new SphereGeometry(100, 100, 100),
-    shaderMaterial  );
+    new GradiantMaterial(1, 0.5));
 scene.add(background);
 
-// make background mesh doublesided
 background.material.side = 2;
-// set camera max zoom
-camera.zoom = 0.1;
+background.name = 'background';
+
 animate()
 
 window.addEventListener('resize', () => {
