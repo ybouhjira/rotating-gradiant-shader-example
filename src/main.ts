@@ -21,6 +21,7 @@ webGLRenderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(webGLRenderer.domElement);
 scene.add(new AmbientLight(0x404040));
 
+
 camera.position.set(0, 8, 8);
 camera.lookAt(0, 0, 0);
 
@@ -87,9 +88,9 @@ function addRandomSphere() {
         )
 
         const getPos = () => Math.random() * 20 - 10;
-        sphere2.position.set(getPos(), getPos(), getPos())
-        // @ts-ignore
-        obj.__rotation = new Vector3(
+        sphere2.position.set(getPos(), getPos(), getPos());
+
+        (obj as any).__rotation = new Vector3(
             Math.random() / 100,
             Math.random() / 100,
             Math.random() / 100
@@ -109,17 +110,17 @@ sphere.rotation.y = Math.PI / 2
 
 sphere.add(...spheres);
 
-
-//scene.add(new AxesHelper(100))
 function animate() {
     requestAnimationFrame(animate);
 
-    shaderMaterial.uniforms.uTime.value += 0.001
+    shaderMaterial.uniforms.uTime.value += 0.005;
 
     spheres.forEach(s => {
-        s.rotation.x += (s.__rotation as Vector3).x;
-        s.rotation.y += (s.__rotation as Vector3).y;
-        s.rotation.z += (s.__rotation as Vector3).z;
+
+        const s1 = s as any;
+        s.rotation.x += (s1.__rotation).x;
+        s.rotation.y += (s1.__rotation).y;
+        s.rotation.z += (s1.__rotation).z;
     })
 
     webGLRenderer.render(scene, camera);
