@@ -1,12 +1,13 @@
 import './style.css'
 import {
     AmbientLight,
-    AxesHelper,
-    Mesh, Object3D,
-    PerspectiveCamera, PlaneGeometry,
+    Mesh,
+    Object3D,
+    PerspectiveCamera,
     Scene,
     ShaderMaterial,
-    SphereGeometry, Vector3,
+    SphereGeometry,
+    Vector3,
     WebGLRenderer
 } from 'three'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
@@ -113,7 +114,7 @@ sphere.add(...spheres);
 function animate() {
     requestAnimationFrame(animate);
 
-    shaderMaterial.uniforms.uTime.value += 0.01
+    shaderMaterial.uniforms.uTime.value += 0.001
 
     spheres.forEach(s => {
         s.rotation.x += (s.__rotation as Vector3).x;
@@ -126,28 +127,7 @@ function animate() {
 
 const background = new Mesh(
     new SphereGeometry(100, 100, 100),
-    new ShaderMaterial({
-        fragmentShader: `
-            varying vec2 vUv;
-            
-            void main() {
-                vec3 red = vec3(1., 0., 0.);
-                vec3 green = vec3(0., 1., 0.);
-                vec3 lightblue = vec3(0., 1., 1.);
-                vec3 royalblue = vec3(0.25, 0.41, 0.88);
-                vec3 darkblue = vec3(0., 0., 0.5);
-                
-                gl_FragColor = vec4(lightblue * vUv.y + darkblue * (1. - vUv.y), 1.);
-            }
-        `,
-        vertexShader: `
-            varying vec2 vUv;
-            void main() {
-            vUv = uv;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-            `
-    })  );
+    shaderMaterial  );
 scene.add(background);
 
 // make background mesh doublesided
