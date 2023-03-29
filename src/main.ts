@@ -1,6 +1,6 @@
 import './style.css'
 import {
-    AmbientLight, AxesHelper,
+    AmbientLight,
     BufferGeometry,
     Mesh,
     PerspectiveCamera,
@@ -11,7 +11,6 @@ import {
 } from 'three'
 import {addRandomSphere} from "./addRandomSphere";
 import {GradiantMaterial} from "./gradiantMaterial";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 const scene = new Scene()
 const webGLRenderer = new WebGLRenderer({
