@@ -5,7 +5,7 @@ export function addRandomSphere(position: Vector3, shaderMaterial: Material) {
         const obj = new Object3D()
 
         const sphere2 = new Mesh(
-            new SphereGeometry(Math.random() * 2 - 0.5, 16, 16),
+            new SphereGeometry(Math.random() * 2 - 0.5, 64, 64),
             shaderMaterial,
         )
 

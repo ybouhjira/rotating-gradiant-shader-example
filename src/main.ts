@@ -1,5 +1,14 @@
 import './style.css'
-import {AmbientLight, BufferGeometry, Mesh, PerspectiveCamera, Scene, SphereGeometry, WebGLRenderer} from 'three'
+import {
+    AmbientLight, AxesHelper,
+    BufferGeometry,
+    Mesh,
+    PerspectiveCamera,
+    PlaneGeometry,
+    Scene,
+    SphereGeometry,
+    WebGLRenderer
+} from 'three'
 import {addRandomSphere} from "./addRandomSphere";
 import {GradiantMaterial} from "./gradiantMaterial";
 
@@ -12,10 +21,8 @@ webGLRenderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(webGLRenderer.domElement);
 scene.add(new AmbientLight(0x404040));
 
-
-camera.position.set(0, 8, 8);
+camera.position.set(10, 0, 0);
 camera.lookAt(0, 0, 0);
-
 
 const shaderMaterial = new GradiantMaterial();
 
@@ -50,13 +57,16 @@ function animate() {
 }
 
 const background = new Mesh(
-    new SphereGeometry(100, 100, 100),
-    new GradiantMaterial(1, 0.5));
+    new PlaneGeometry(100, 100, 1, 1),
+    new GradiantMaterial(1, 0.5)
+);
 scene.add(background);
 
-background.material.side = 2;
+background.position.set(0, 0, 0 );
+background.rotation.x = Math.PI / 2;
 background.name = 'background';
 
+scene.add( new AxesHelper(1000));
 animate()
 
 window.addEventListener('resize', () => {
